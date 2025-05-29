@@ -45,11 +45,6 @@ Make sure the server is running on `http://localhost:3001`.
 - [Socket.IO](https://socket.io/)
 - [Tailwind CSS](https://tailwindcss.com/)
 
-## ✨ Design Vision
-
-> This isn’t the first Salad Bowl app, but it’s the most fun and joyful.  
-> We’re focused on playfulness, beautiful interactions, and multiplayer delight.
-
 ---
 
 ## 🔜 Roadmap
