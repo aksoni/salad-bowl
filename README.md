@@ -1,54 +1,60 @@
-# React + TypeScript + Vite
+# Salad Bowl 🎉🥗
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A joyful and real-time web game based on the classic party game *Salad Bowl* — built with **React**, **Vite**, **Express**, and **Socket.IO**.
 
-Currently, two official plugins are available:
+## 🗂 Project Structure
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+```
+salad-bowl/
+├── salad-bowl-client/   # React + Vite frontend
+├── salad-bowl-server/   # Express + Socket.IO backend
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🚀 Getting Started
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### 1. Clone the repo
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+```bash
+git clone https://github.com/YOUR_USERNAME/salad-bowl.git
+cd salad-bowl
 ```
+
+### 2. Start the client
+
+```bash
+cd salad-bowl-client
+npm install
+npm run dev
+```
+
+### 3. Start the server
+
+```bash
+cd salad-bowl-server
+npm install
+npm run dev
+```
+
+Make sure the server is running on `http://localhost:3001`.
+
+## 📦 Tech Stack
+
+- [React](https://react.dev/)
+- [Vite](https://vitejs.dev/)
+- [Express](https://expressjs.com/)
+- [Socket.IO](https://socket.io/)
+- [Tailwind CSS](https://tailwindcss.com/)
+
+## ✨ Design Vision
+
+> This isn’t the first Salad Bowl app, but it’s the most fun and joyful.  
+> We’re focused on playfulness, beautiful interactions, and multiplayer delight.
+
+---
+
+## 🔜 Roadmap
+
+- [x] Phrase entry with animations
+- [ ] Real-time multiplayer sync
+- [ ] Game rounds: charades, one-word, gesture
+- [ ] Final scoring and replay
