@@ -1,7 +1,5 @@
-import React, { useState } from "react";
-import { io } from "socket.io-client";
-
-const socket = io("http://localhost:5173");
+import React, { useState, useEffect } from "react";
+import socket from "../socket";
 
 interface Props {
   onJoin: (name: string, gameCode: string) => void;
@@ -16,7 +14,10 @@ const StartRoom: React.FC<Props> = ({ onJoin }) => {
     const playerName = name.trim();
     if (!code || !playerName) return;
 
+    console.log("📤 Emitting join_game", { gameCode: code, name: playerName });
+
     socket.emit("join_game", { gameCode: code, name: playerName });
+
     onJoin(playerName, code);
   };
 

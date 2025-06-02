@@ -1,11 +1,30 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import StartRoom from "./components/StartRoom";
 import WaitRoom from "./components/WaitRoom";
+import socket from "./socket"
 
 const App: React.FC = () => {
   const [screen, setScreen] = useState<"start" | "wait">("start");
   const [name, setName] = useState("");
   const [gameCode, setGameCode] = useState("");
+
+    useEffect(() => {
+    socket.connect();
+
+    socket.on("connect", () => {
+      console.log("✅ Connected to server:", socket.id);
+    });
+
+    socket.on("joined_game", ({ gameCode, name }) => {
+      console.log(`🎉 Joined game ${gameCode} as ${name}`);
+      // update global game state if needed
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-amber-100">

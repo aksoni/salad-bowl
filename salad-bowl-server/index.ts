@@ -19,15 +19,34 @@ app.get("/", (_req, res) => {
 });
 
 io.on("connection", (socket) => {
-  console.log(`🟢 User connected: ${socket.id}`);
-
-  socket.on("disconnect", () => {
-    console.log(`🔴 User disconnected: ${socket.id}`);
-  });
+  console.log("🟢 Connected:", socket.id);
 
   socket.on("ping", () => {
     console.log("📡 Got ping");
     socket.emit("pong");
+  });
+  socket.onAny((event, ...args) => {
+  console.log(`📥 Got event: ${event}`, args);
+});
+
+  socket.on("join_game", (payload) => {
+    console.log("📩 join_game payload:", payload);
+    const { gameCode, name } = payload || {};
+    if (!gameCode || !name) {
+      console.log("⚠️ Missing gameCode or name");
+      return;
+    }
+
+    console.log(`🙋 ${name} joined room ${gameCode}`);
+    socket.join(gameCode);
+
+    socket.emit("joined_game", { gameCode, name });
+    socket.to(gameCode).emit("player_joined", { name });
+  });
+
+
+  socket.on("disconnect", () => {
+    console.log("🔴 Disconnected:", socket.id);
   });
 });
 
