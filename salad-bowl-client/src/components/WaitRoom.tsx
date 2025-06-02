@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import socket from "../socket";
 
 interface Props {
   name: string;
@@ -7,12 +8,31 @@ interface Props {
 
 const WaitRoom: React.FC<Props> = ({ name, gameCode }) => {
   const [phrases, setPhrases] = useState(["", "", ""]);
-  const [submitted, setSubmitted] = useState(false);
     const [transforming, setTransforming] = useState(false); // tracks when we're transforming boxes to veggies
+  const [submittedPlayers, setSubmittedPlayers] = useState<string[]>([]);
 
   const [showConfirmation, setShowConfirmation] = useState(false);
     type Veggie = { src: string; offset: number };
     const [veggies, setVeggies] = useState<Veggie[]>([]);
+
+  const [players, setPlayers] = useState<string[]>([]);
+
+  useEffect(() => {
+    socket.on("room_state", ({ players, submitted }) => {
+      console.log("👥 Updated player list:", players);
+      setPlayers(players);
+      setSubmittedPlayers(submitted || []);
+    });
+
+    socket.on("all_submitted", () => {
+      console.log("🎉 All players submitted!");    
+    });
+
+    return () => {
+      socket.off("room_state");
+    };
+  }, []);
+  
 
 
 
@@ -30,19 +50,32 @@ const WaitRoom: React.FC<Props> = ({ name, gameCode }) => {
 
   // After animation completes
   setTimeout(() => {
-    setSubmitted(true);
     setShowConfirmation(true);
   }, 600); // matches drop duration
+
+  socket.emit("submit_phrases", {
+    gameCode,
+    name,
+    phrases, // the array of 3 strings
+  });
 };
 
 
   const canSubmit = phrases.every((p) => p.trim() !== "");
+  const submitted = submittedPlayers.includes(name);
 
   return (
   <div className="flex flex-col items-center justify-center min-h-screen px-4 text-center">
     <h2 className="text-3xl font-bold text-green-700 mb-6">
       Welcome, {name}
     </h2>
+    <ul className="text-lg">
+      {players.map((p) => (
+        <li key={p}>
+          {submittedPlayers.includes(p) ? "✅" : "🕒"} {p}
+        </li>
+      ))}
+    </ul>
     <p className="mb-8 text-gray-600">Game Code: {gameCode}</p>
 
     {/* Phrase boxes */}

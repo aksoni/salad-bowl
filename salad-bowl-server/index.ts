@@ -8,6 +8,9 @@ const server = http.createServer(app);
 const io = new Server(server, {
   cors: { origin: "*" },
 });
+const rooms: Record<string, string[]> = {};
+const roomPhrases: Record<string, { [name: string]: string[] }> = {};
+const roomSubmitted: Record<string, Set<string>> = {};
 
 app.use(cors());
 app.use(express.json());
@@ -21,14 +24,6 @@ app.get("/", (_req, res) => {
 io.on("connection", (socket) => {
   console.log("🟢 Connected:", socket.id);
 
-  socket.on("ping", () => {
-    console.log("📡 Got ping");
-    socket.emit("pong");
-  });
-  socket.onAny((event, ...args) => {
-  console.log(`📥 Got event: ${event}`, args);
-});
-
   socket.on("join_game", (payload) => {
     console.log("📩 join_game payload:", payload);
     const { gameCode, name } = payload || {};
@@ -40,8 +35,47 @@ io.on("connection", (socket) => {
     console.log(`🙋 ${name} joined room ${gameCode}`);
     socket.join(gameCode);
 
+    if (!rooms[gameCode]) {
+      rooms[gameCode] = [];
+    }
+    rooms[gameCode].push(name);
+    console.log("👥 Updated player list:", rooms[gameCode]);
+
+    if (!roomSubmitted[gameCode]) {
+      roomSubmitted[gameCode] = new Set();
+    }
+
+
+    io.to(gameCode).emit("room_state", {
+      players: rooms[gameCode],
+      submitted: Array.from(roomSubmitted[gameCode]),
+    })
+
     socket.emit("joined_game", { gameCode, name });
-    socket.to(gameCode).emit("player_joined", { name });
+  });
+
+  socket.on("submit_phrases", ({ gameCode, name, phrases }) => {
+    console.log(`📝 ${name} submitted phrases in ${gameCode}`);
+
+    if (!roomPhrases[gameCode]) roomPhrases[gameCode] = {};
+    roomPhrases[gameCode][name] = phrases;
+
+    if (!roomSubmitted[gameCode]) roomSubmitted[gameCode] = new Set();
+    roomSubmitted[gameCode].add(name);
+
+    const allPlayers = rooms[gameCode] || [];
+    const submittedPlayers = roomSubmitted[gameCode];
+
+    const allSubmitted = allPlayers.every((p) => submittedPlayers.has(p));
+
+    io.to(gameCode).emit("room_state", {
+      players: allPlayers,
+      submitted: Array.from(submittedPlayers),
+    });
+
+    if (allSubmitted) {
+      io.to(gameCode).emit("all_submitted");
+    }
   });
 
 
